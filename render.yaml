@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: ecommerce-dashboard
+    env: php
+    region: oregon
+    plan: free
+    buildCommand: |
+      cd backend
+      composer install --no-dev --optimize-autoloader
+      touch database/database.sqlite
+      php artisan key:generate
+      php artisan migrate --force --seed
+    startCommand: cd backend && php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_NAME
+        value: eCommerce Dashboard
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /opt/render/project/src/backend/database/database.sqlite
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_DRIVER
+        value: file
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: error
