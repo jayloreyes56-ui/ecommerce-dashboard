@@ -8,11 +8,14 @@ return [
     | Requests from these domains will receive stateful API authentication
     | cookies. Typically your SPA domain.
     */
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        env('APP_URL') ? ',' . parse_url(env('APP_URL'), PHP_URL_HOST) : ''
-    ))),
+    'stateful' => [
+        'localhost',
+        'localhost:3000',
+        '127.0.0.1',
+        '127.0.0.1:8000',
+        '::1',
+        'ecommerce-dashboard-sigma-one.vercel.app',
+    ],
 
     'guard' => ['api'],
 
