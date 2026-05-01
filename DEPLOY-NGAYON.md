@@ -1,6 +1,6 @@
 # I-Deploy Na Ngayon! 🚀
 
-## ✅ FIXED NA ANG COLLISION DEPENDENCY ERROR!
+## ✅ FIXED NA ANG ARTISAN FILE ERROR!
 
 Nag-commit at nag-push na ako ng final fix sa GitHub.
 
@@ -10,18 +10,19 @@ Nag-commit at nag-push na ako ng final fix sa GitHub.
 
 ### 🔴 Latest Error:
 ```
-Class "NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider" not found
+Could not open input file: artisan
+Script @php artisan package:discover --ansi handling the post-autoload-dump event returned with error code 1
 ```
 
 ### ✅ Root Cause:
-1. **Cached service providers** - Yung `bootstrap/cache/packages.php` at `services.php` ay naka-cache from local development
-2. **Dev dependencies** - Ang `nunomaduro/collision` ay nasa `require-dev` section, hindi kasama sa production build (`--no-dev`)
-3. **Cache conflict** - Yung cached files ay nag-reference sa Collision, pero hindi siya installed sa production
+1. **Composer scripts** - After `composer install`, nag-run ng `@php artisan package:discover`
+2. **Missing artisan file** - Nag-install ng dependencies BAGO pa ma-copy yung artisan file
+3. **Build order issue** - Kailangan ng artisan file BEFORE running composer scripts
 
 ### ✅ Solution Applied:
-1. **Exclude bootstrap cache** - Added `backend/bootstrap/cache/*` sa `.dockerignore`
-2. **Remove cached files** - Explicitly delete cached service provider files after copying application
-3. **Fresh package discovery** - Laravel will regenerate the cache without dev dependencies
+1. **Copy artisan file** - Added `COPY backend/artisan ./` kasama ng composer files
+2. **Use --no-scripts** - Install dependencies without running scripts first
+3. **Run scripts later** - After copying all files, run `composer dump-autoload` manually
 
 ---
 
@@ -39,9 +40,9 @@ Class "NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider" not found
 
 ### 3. ✅ Nag-commit ng Changes
 ```
-Commit: 5bd9a3f
-Message: "Fix Collision dependency issue: exclude bootstrap cache and remove cached service providers"
-Files: Dockerfile, .dockerignore
+Commit: 39c281c
+Message: "Fix composer install: copy artisan file before running composer scripts"
+Files: Dockerfile
 ```
 
 ### 4. ✅ Nag-push sa GitHub
@@ -72,20 +73,20 @@ Status: Successfully pushed
 
 Makikita mo sa Render logs:
 ```
-✓ Installing dependencies via Composer (without dev packages)
+✓ Installing dependencies via Composer (with --no-scripts)
 ✓ Copying application files
+✓ Running composer dump-autoload
 ✓ Removing cached service provider files
 ✓ Setting up Laravel storage directories
 ✓ Creating .env file from .env.example
 ✓ Generating application key (APP_KEY)
-✓ Regenerating autoload files
-✓ Caching configuration (fresh, without Collision)
+✓ Caching configuration
 ✓ Running database migrations
 ✓ Seeding database
 ✓ Starting Laravel server on port 8080
 ```
 
-**Dapat walang error na "CollisionServiceProvider not found"!**
+**Dapat walang error na "Could not open input file: artisan"!**
 
 ---
 
@@ -148,6 +149,9 @@ Basahin ang `SHOPIFY-STEP-BY-STEP.md` - kumpleto doon lahat ng steps!
 
 ### Common Issues:
 
+**"Could not open input file: artisan"**
+- ✅ FIXED NA ITO! Nag-push na ako ng solution
+
 **"CollisionServiceProvider not found"**
 - ✅ FIXED NA ITO! Nag-push na ako ng solution
 
@@ -168,7 +172,10 @@ Basahin ang `SHOPIFY-STEP-BY-STEP.md` - kumpleto doon lahat ng steps!
 ## Summary
 
 ### ✅ Tapos Na:
+- ✅ Fixed artisan file error
 - ✅ Fixed Collision dependency error
+- ✅ Copy artisan file before composer install
+- ✅ Use --no-scripts flag for composer install
 - ✅ Exclude bootstrap cache from Docker build
 - ✅ Remove cached service provider files
 - ✅ Proper Laravel storage permissions
@@ -195,19 +202,42 @@ Basahin ang `SHOPIFY-STEP-BY-STEP.md` - kumpleto doon lahat ng steps!
 ### What Changed:
 
 #### Dockerfile:
-1. **Remove cached files** - Delete `bootstrap/cache/*.php` after copying application
-2. **Why:** Cached files reference dev dependencies (Collision) that aren't installed in production
+1. **Copy artisan file early** - Copy `artisan` file together with composer files
+2. **Use --no-scripts** - Install dependencies without running post-install scripts
+3. **Run scripts manually** - After copying all files, run `composer dump-autoload`
+4. **Remove cached files** - Delete `bootstrap/cache/*.php` after copying application
+5. **Why:** Composer scripts need artisan file to run `package:discover`
 
 #### .dockerignore:
 1. **Exclude bootstrap cache** - Added `backend/bootstrap/cache/*`
 2. **Why:** Prevent local cache files from being copied to Docker image
 
 ### Why It Works Now:
+- Artisan file is present before composer runs post-install scripts
+- Composer can successfully run `package:discover` command
 - Laravel's package discovery runs fresh without dev dependencies
 - No cached references to Collision or other dev packages
 - Clean production build with only required dependencies
 
-### The Issue Explained:
+### The Issues Explained:
+
+#### Issue 1: Missing Artisan File
+```
+Build Order (WRONG):
+1. Copy composer.json, composer.lock
+2. Run composer install
+   → Runs post-install script: @php artisan package:discover
+   → ERROR: artisan file not found!
+
+Build Order (CORRECT):
+1. Copy composer.json, composer.lock, artisan
+2. Run composer install --no-scripts
+3. Copy all files
+4. Run composer dump-autoload (with artisan present)
+   → SUCCESS! ✅
+```
+
+#### Issue 2: Cached Dev Dependencies
 ```
 Local Development:
 - composer install (with dev dependencies)
