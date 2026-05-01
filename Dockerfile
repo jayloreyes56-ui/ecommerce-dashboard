@@ -28,10 +28,13 @@ WORKDIR /app/backend
 COPY backend/composer.json backend/composer.lock ./
 
 # Install dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --no-dev --optimize-autoloader
 
 # Copy the rest of the application
 COPY backend/ ./
+
+# Remove cached service providers that reference dev dependencies
+RUN rm -f bootstrap/cache/packages.php bootstrap/cache/services.php bootstrap/cache/config.php
 
 # Set proper permissions for Laravel
 RUN mkdir -p storage/framework/cache/data \
