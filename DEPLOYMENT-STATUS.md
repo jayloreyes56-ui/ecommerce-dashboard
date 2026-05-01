@@ -1,192 +1,194 @@
 # Deployment Status
 
-## ✅ Completed Steps
+## Current Status: ✅ READY FOR DEPLOYMENT
 
-1. ✅ **Code pushed to GitHub**
-   - Repository: https://github.com/yloooo12/ecommerce-dashboard
-   - Branch: main
-   - All files committed and pushed
-
-2. ✅ **Railway project created**
-   - Project: ecommerce-dashboard
-   - Connected to GitHub repository
-   - Auto-deploy enabled
-
-3. ✅ **Configuration files created**
-   - `railway.json` - Railway deployment config
-   - `railway.toml` - Railway settings
-   - `nixpacks.toml` - Build configuration
-   - `Procfile` - Start command
-   - `.gitignore` - Git ignore rules
+Last Updated: May 1, 2026 - 4:35 PM GMT+8
 
 ---
 
-## ⏳ In Progress
+## Latest Update
 
-**Railway Deployment**
-- Status: Building...
-- Expected time: 2-3 minutes
-- Auto-triggered by GitHub push
+### ✅ PHP Version Fixed - Ready to Deploy!
 
----
+**Changes Committed & Pushed:**
+- ✅ Updated Dockerfile from PHP 8.2 to PHP 8.4
+- ✅ Committed composer.lock with Symfony 8 packages
+- ✅ Pushed to GitHub: commit `9dacdde`
 
-## 📝 Next Steps (After Deployment Succeeds)
-
-### 1. Generate Domain
+**Git Status:**
 ```
-Railway Dashboard → Settings → Networking → Generate Domain
-```
-
-### 2. Get Your URL
-```
-Example: https://ecommerce-dashboard-production-abc123.up.railway.app
-```
-
-### 3. Update Environment Variables
-```
-Go to: Variables → Raw Editor
-
-Update these:
-APP_URL=https://your-actual-domain.railway.app
-SANCTUM_STATEFUL_DOMAINS=your-actual-domain.railway.app
-CORS_ALLOWED_ORIGINS=https://your-actual-domain.railway.app
-FRONTEND_URL=https://your-actual-domain.railway.app
-```
-
-### 4. Generate APP_KEY
-```
-Run locally:
-cd backend
-php artisan key:generate --show
-
-Copy output and add to Railway Variables:
-APP_KEY=base64:abc123...
-```
-
-### 5. Redeploy
-```
-After updating variables, Railway will auto-redeploy
-Wait 2-3 minutes
-```
-
-### 6. Test Your Application
-```
-Open: https://your-domain.railway.app
-
-Should see: Login page
-
-Login with:
-Email: admin@example.com
-Password: password
-```
-
-### 7. Use in Shopify
-```
-Shopify App Settings:
-App URL: https://your-domain.railway.app
-Redirect URL: https://your-domain.railway.app/api/v1/shopify/callback
+Commit: 9dacdde - "Fix PHP version for deployment - upgrade to PHP 8.4"
+Branch: main
+Remote: https://github.com/yloooo12/ecommerce-dashboard.git
+Status: Pushed successfully
 ```
 
 ---
 
-## 🔍 Troubleshooting
+## Deployment Attempts
 
-### Check Deployment Logs
-```
-Railway → Deployments → Click latest → View Logs
-```
+### Railway (Attempted - Failed)
+- **Status:** ❌ Failed
+- **Issues:** 
+  - Monorepo structure not properly detected
+  - Config files not found in correct locations
+  - Service config errors
+- **Conclusion:** Railway not suitable for this monorepo structure
 
-### Common Issues
+### Render (Current - Ready)
+- **Status:** ✅ Ready to Deploy
+- **Platform:** Render.com
+- **Plan:** Free tier
+- **Repository:** https://github.com/yloooo12/ecommerce-dashboard.git
+- **Latest Commit:** 9dacdde
 
-**Build Failed:**
-- Check logs for specific error
-- Usually missing dependencies or syntax errors
-
-**Application Error:**
-- Check if APP_KEY is set
-- Check if environment variables are correct
-- View deployment logs
-
-**502 Bad Gateway:**
-- Check start command
-- Should be: cd backend && php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=$PORT
-
-**CORS Error:**
-- Update CORS_ALLOWED_ORIGINS with your actual domain
-- Redeploy
+#### Issues Encountered & Fixed:
+1. ✅ PHP Version Mismatch - FIXED
+   - ~~Dockerfile used PHP 8.2~~
+   - ~~composer.lock requires PHP 8.4 (Symfony 8 packages)~~
+   - **Solution:** Updated Dockerfile to PHP 8.4
+   - **Status:** Committed and pushed
 
 ---
 
-## 📊 Deployment Configuration
+## Next Steps - MANUAL ACTION REQUIRED
 
-### Build Process (nixpacks.toml)
-```toml
-[phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nodejs-20_x"]
+### 1. Deploy on Render (Manual)
 
-[phases.install]
-- Install PHP dependencies (composer)
-- Install Node dependencies (npm)
+You need to manually trigger deployment on Render:
 
-[phases.build]
-- Build React frontend
-- Create SQLite database
+**Option A: If you already have a Render service:**
+1. Go to https://dashboard.render.com
+2. Click on your `ecommerce-dashboard` service
+3. Click "Manual Deploy" button
+4. Select "Clear build cache & deploy"
+5. Wait 3-5 minutes for deployment
 
-[start]
-- Run migrations
-- Seed database
-- Start PHP server
+**Option B: If you need to create a new service:**
+1. Go to https://dashboard.render.com
+2. Click "New +" → "Web Service"
+3. Connect your GitHub repository: `yloooo12/ecommerce-dashboard`
+4. Configure:
+   - Name: `ecommerce-dashboard`
+   - Environment: `Docker`
+   - Region: `Oregon (US West)`
+   - Branch: `main`
+   - Dockerfile Path: `./Dockerfile`
+5. Click "Create Web Service"
+6. Wait 3-5 minutes for deployment
+
+### 2. Get Your Public URL
+
+After deployment completes, you'll see:
+```
+https://ecommerce-dashboard-xxxx.onrender.com
 ```
 
-### Environment
-```
-- PHP 8.2
-- Node.js 20
-- SQLite database
-- File-based cache
-- Sync queue
+Copy this URL - you'll need it for Shopify!
+
+### 3. Test the Deployment
+
+Open the URL in your browser:
+- ✅ Should show: "eCommerce Dashboard API"
+- ✅ Test endpoint: `https://your-url.onrender.com/api/v1/health`
+
+### 4. Configure Shopify
+
+Use your public URL in Shopify app settings:
+- **App URL:** `https://your-url.onrender.com`
+- **Redirect URL:** `https://your-url.onrender.com/api/v1/shopify/callback`
+- **Webhook URLs:** `https://your-url.onrender.com/api/v1/shopify/webhooks/*`
+
+Refer to `SHOPIFY-STEP-BY-STEP.md` for complete Shopify setup instructions.
+
+---
+
+## Deployment Configuration
+
+### Files Created & Updated:
+- ✅ `Dockerfile` - Docker build configuration (PHP 8.4) ← UPDATED
+- ✅ `render.yaml` - Render deployment configuration
+- ✅ `.dockerignore` - Docker ignore rules
+- ✅ `backend/composer.lock` - Updated dependencies ← UPDATED
+
+### Environment Variables (Render):
+```yaml
+APP_NAME=eCommerce Dashboard
+APP_ENV=production
+APP_DEBUG=false
+DB_CONNECTION=sqlite
+DB_DATABASE=/app/backend/database/database.sqlite
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+LOG_CHANNEL=stack
+LOG_LEVEL=error
+PORT=8080
 ```
 
 ---
 
-## ✅ Success Criteria
+## Technical Details
 
-Your deployment is successful when:
+### PHP Version Resolution:
+- **Local Development:** PHP 8.5
+- **Symfony 8 Packages:** Require PHP 8.4+
+- **Dockerfile:** PHP 8.4 ✅
+- **Status:** Compatible
 
-```
-☐ Railway deployment shows "Success" (green checkmark)
-☐ Domain generated
-☐ Can access URL in browser
-☐ Login page loads
-☐ Can login with admin credentials
-☐ Dashboard loads with data
-☐ All API endpoints working
-```
+### Database:
+- **Type:** SQLite
+- **Location:** `/app/backend/database/database.sqlite`
+- **Migrations:** Run automatically during build
+- **Seeding:** Includes demo data
 
----
-
-## 🎯 Current Status
-
-**Last Updated:** 2026-05-01
-
-**Status:** ⏳ Waiting for Railway deployment to complete
-
-**Next Action:** Check Railway Deployments tab for build status
-
----
-
-## 📞 Need Help?
-
-If deployment fails:
-1. Check deployment logs in Railway
-2. Look for specific error messages
-3. Common fixes:
-   - Update nixpacks.toml
-   - Fix environment variables
-   - Check start command
+### Build Process:
+1. Pull PHP 8.4 CLI image
+2. Install system dependencies
+3. Install PHP extensions (pdo_sqlite, mbstring, etc.)
+4. Copy application files
+5. Run `composer install --no-dev --optimize-autoloader`
+6. Create SQLite database
+7. Generate app key
+8. Run migrations and seeders
+9. Start Laravel server on port 8080
 
 ---
 
-**Repository:** https://github.com/yloooo12/ecommerce-dashboard  
-**Railway Project:** ecommerce-dashboard  
-**Expected URL:** https://ecommerce-dashboard-production-[random].up.railway.app
+## Troubleshooting
+
+### If deployment fails on Render:
+
+1. **Check Build Logs:**
+   - Go to your service → "Logs" tab
+   - Look for errors in build process
+
+2. **Common Issues:**
+   - ❌ PHP version mismatch → FIXED (now using PHP 8.4)
+   - ❌ Composer dependencies → FIXED (composer.lock updated)
+   - ⚠️ Database permissions → Handled by Dockerfile (chmod 777)
+   - ⚠️ Missing APP_KEY → Generated during build
+
+3. **If build succeeds but app doesn't start:**
+   - Check "Deploy Logs" tab
+   - Verify PORT environment variable is set
+   - Check Laravel logs for errors
+
+### Need Help?
+
+Refer to these guides:
+- `PUBLISH-NOW.md` - Quick publish guide
+- `SHOPIFY-STEP-BY-STEP.md` - Shopify integration (after deployment)
+- `DEPLOYMENT.md` - General deployment information
+
+---
+
+## Summary
+
+✅ **Code is ready!** All fixes have been committed and pushed to GitHub.
+
+🎯 **Your action:** Go to Render dashboard and deploy the service.
+
+⏱️ **Time estimate:** 3-5 minutes for deployment to complete.
+
+🔗 **Result:** You'll get a public HTTPS URL for Shopify integration!
