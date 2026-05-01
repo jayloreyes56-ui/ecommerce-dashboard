@@ -1,5 +1,5 @@
-# Use PHP 8.2 with Apache
-FROM php:8.2-cli
+# Use PHP 8.4 with CLI
+FROM php:8.4-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
