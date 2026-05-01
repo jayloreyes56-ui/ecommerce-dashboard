@@ -21,12 +21,17 @@ Now i-deploy natin ang frontend!
 3. Click **"Import"**
 
 ### Step 3: Configure
+**IMPORTANTE:** I-configure ng tama:
+
 ```
-Framework Preset: Vite
+Framework Preset: Vite (auto-detected)
 Root Directory: frontend
-Build Command: npm run build
-Output Directory: dist
+Build Command: npm run build (auto-detected)
+Output Directory: dist (auto-detected)
+Install Command: npm install (auto-detected)
 ```
+
+**NOTE:** Vercel will auto-detect most settings. Just make sure **Root Directory** is set to `frontend`!
 
 ### Step 4: Add Environment Variable
 Click **"Environment Variables"**:
