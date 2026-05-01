@@ -1,17 +1,14 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "nodejs-20_x"]
+nixPkgs = ["php82", "php82Packages.composer"]
 
 [phases.install]
-cmds = [
-  "composer install --no-dev --optimize-autoloader",
-  "npm ci --prefix ../frontend"
-]
+cmds = ["composer install --no-dev --optimize-autoloader"]
 
 [phases.build]
 cmds = [
-  "npm run build --prefix ../frontend",
   "mkdir -p database",
-  "touch database/database.sqlite"
+  "touch database/database.sqlite",
+  "chmod 664 database/database.sqlite"
 ]
 
 [start]
