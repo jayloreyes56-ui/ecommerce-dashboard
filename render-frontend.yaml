@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ecommerce-dashboard-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    pullRequestPreviewsEnabled: true
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://ecommerce-dashboard-v4dh.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
