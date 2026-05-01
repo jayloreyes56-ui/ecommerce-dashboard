@@ -24,18 +24,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app/backend
 
-# Copy composer files first for better caching
-COPY backend/composer.json backend/composer.lock ./
-COPY backend/artisan ./
-
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-# Copy the rest of the application
+# Copy all application files first
 COPY backend/ ./
 
-# Run composer scripts now that all files are present
-RUN composer dump-autoload --optimize
+# Install dependencies (all files are present now)
+RUN composer install --no-dev --optimize-autoloader
 
 # Remove cached service providers that reference dev dependencies
 RUN rm -f bootstrap/cache/packages.php bootstrap/cache/services.php bootstrap/cache/config.php
@@ -62,9 +55,6 @@ RUN cp .env.example .env \
 
 # Generate application key
 RUN php artisan key:generate --force
-
-# Run post-install scripts
-RUN composer dump-autoload --optimize
 
 # Cache configuration and routes
 RUN php artisan config:cache \
