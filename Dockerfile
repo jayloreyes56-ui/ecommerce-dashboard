@@ -26,12 +26,16 @@ WORKDIR /app/backend
 
 # Copy composer files first for better caching
 COPY backend/composer.json backend/composer.lock ./
+COPY backend/artisan ./
 
 # Install dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Copy the rest of the application
 COPY backend/ ./
+
+# Run composer scripts now that all files are present
+RUN composer dump-autoload --optimize
 
 # Remove cached service providers that reference dev dependencies
 RUN rm -f bootstrap/cache/packages.php bootstrap/cache/services.php bootstrap/cache/config.php
