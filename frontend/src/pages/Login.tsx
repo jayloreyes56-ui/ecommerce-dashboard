@@ -13,6 +13,11 @@ const schema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
+const DEMO_ACCOUNTS = [
+  { role: 'Admin', email: 'admin@company.com', password: 'Admin@1234', color: 'bg-brand-50 border-brand-200 text-brand-700 hover:bg-brand-100' },
+  { role: 'Staff', email: 'staff@company.com', password: 'Staff@1234', color: 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100' },
+]
+
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
 
@@ -20,6 +25,7 @@ export default function Login() {
     register,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginPayload>({ resolver: zodResolver(schema) })
 
@@ -27,6 +33,11 @@ export default function Login() {
   const loginMutation = useLogin({ setError })
 
   const onSubmit = (data: LoginPayload) => loginMutation.mutate(data)
+
+  const fillCredentials = (email: string, password: string) => {
+    setValue('email', email)
+    setValue('password', password)
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
@@ -39,6 +50,25 @@ export default function Login() {
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900">eCommerce Dashboard</h1>
             <p className="mt-1 text-sm text-gray-500">Sign in to your account</p>
+          </div>
+        </div>
+
+        {/* Demo Credentials */}
+        <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50 p-4">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-blue-600">Demo Accounts — click to fill</p>
+          <div className="flex gap-2">
+            {DEMO_ACCOUNTS.map((account) => (
+              <button
+                key={account.role}
+                type="button"
+                onClick={() => fillCredentials(account.email, account.password)}
+                className={`flex-1 rounded-lg border px-3 py-2 text-left text-xs transition-colors ${account.color}`}
+              >
+                <p className="font-semibold">{account.role}</p>
+                <p className="mt-0.5 opacity-75">{account.email}</p>
+                <p className="opacity-75">{account.password}</p>
+              </button>
+            ))}
           </div>
         </div>
 
