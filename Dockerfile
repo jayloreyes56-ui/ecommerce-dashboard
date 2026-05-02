@@ -1,22 +1,21 @@
 # Use PHP 8.4 with CLI
 FROM php:8.4-cli
 
-# Install system dependencies
+# Install system dependencies including PostgreSQL
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
     zip \
     unzip \
-    sqlite3 \
-    libsqlite3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_sqlite mbstring exif pcntl bcmath gd
+# Install PHP extensions (including pdo_pgsql for PostgreSQL)
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
 # Get Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -39,32 +38,13 @@ RUN mkdir -p storage/framework/cache/data \
     storage/framework/views \
     storage/logs \
     bootstrap/cache \
-    database \
-    && chmod -R 775 storage bootstrap/cache \
-    && touch database/database.sqlite \
-    && chmod 664 database/database.sqlite
+    && chmod -R 775 storage bootstrap/cache
 
-# Create .env from example and configure for production
-RUN cp .env.example .env \
-    && sed -i 's/APP_ENV=production/APP_ENV=production/' .env \
-    && sed -i 's/APP_DEBUG=false/APP_DEBUG=false/' .env \
-    && sed -i 's/DB_CONNECTION=pgsql/DB_CONNECTION=sqlite/' .env \
-    && sed -i 's/CACHE_DRIVER=redis/CACHE_DRIVER=file/' .env \
-    && sed -i 's/QUEUE_CONNECTION=redis/QUEUE_CONNECTION=sync/' .env \
-    && sed -i 's/SESSION_DRIVER=redis/SESSION_DRIVER=file/' .env
-
-# Generate application key
-RUN php artisan key:generate --force
-
-# Cache configuration and routes
-RUN php artisan config:cache \
-    && php artisan route:cache
-
-# Run migrations and seed
-RUN php artisan migrate --force --seed
+# Note: .env will be configured via Render environment variables
+# No need to create .env file here
 
 # Expose port
 EXPOSE 8080
 
-# Start server
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+# Start server with migrations
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
