@@ -73,8 +73,6 @@ class ReportController extends Controller
      */
     public function sales(Request $request): JsonResponse
     {
-        $this->authorize('view-reports');
-
         $validated = $request->validate([
             'from'     => ['required', 'date'],
             'to'       => ['required', 'date', 'after_or_equal:from'],
@@ -126,8 +124,6 @@ class ReportController extends Controller
      */
     public function customers(Request $request): JsonResponse
     {
-        $this->authorize('view-reports');
-
         $validated = $request->validate([
             'from'  => ['required', 'date'],
             'to'    => ['required', 'date', 'after_or_equal:from'],
