@@ -32,6 +32,6 @@ return [
     'cache' => [
         'expiration_time'  => \DateInterval::createFromDateString('24 hours'),
         'key'              => 'spatie.permission.cache',
-        'store'            => 'file',
+        'store'            => 'array',
     ],
 ];
