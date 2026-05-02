@@ -26,6 +26,7 @@ return [
     'allowed_origins_patterns' => [
         '/^https:\/\/ecommerce-dashboard-.*\.vercel\.app$/',
         '/^https:\/\/.*-jayloreyes56-uis-projects\.vercel\.app$/',
+        '/^https:\/\/ecommerce-dashboard-.*\.vercel\.app$/',
     ],
 
     'allowed_headers' => ['*'],

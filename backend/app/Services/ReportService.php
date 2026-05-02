@@ -51,18 +51,19 @@ class ReportService
         return Cache::remember($cacheKey, 600, function () use ($from, $to, $groupBy) {
             // PostgreSQL-compatible date formatting
             $format = match ($groupBy) {
-                'week'  => 'IYYY-IW',   // ISO Year-Week
-                'month' => 'YYYY-MM',   // Year-Month
+                'week'  => 'IYYY-IW',    // ISO Year-Week
+                'month' => 'YYYY-MM',    // Year-Month
                 default => 'YYYY-MM-DD', // Year-Month-Day
             };
 
+            // Use string interpolation for format (safe - values are hardcoded above)
             return DB::table('orders')
-                ->selectRaw("TO_CHAR(placed_at, ?) as period, COUNT(*) as order_count, SUM(total) as revenue", [$format])
+                ->selectRaw("TO_CHAR(placed_at, '{$format}') as period, COUNT(*) as order_count, SUM(total) as revenue")
                 ->where('placed_at', '>=', $from)
                 ->where('placed_at', '<=', $to . ' 23:59:59')
                 ->whereNotIn('status', ['cancelled', 'refunded'])
                 ->whereNull('deleted_at')
-                ->groupByRaw("TO_CHAR(placed_at, ?)", [$format])
+                ->groupByRaw("TO_CHAR(placed_at, '{$format}')")
                 ->orderBy('period')
                 ->get()
                 ->toArray();
