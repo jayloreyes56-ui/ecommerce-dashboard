@@ -40,12 +40,8 @@ RUN mkdir -p storage/framework/cache/data \
     bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Create .env file and generate APP_KEY
-RUN cp .env.example .env \
-    && php artisan key:generate --force
-
 # Expose port
 EXPOSE 8080
 
-# Start server - clear config to use Render env vars, but keep generated APP_KEY as fallback
+# Start server - Laravel will read from environment variables
 CMD php artisan config:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
