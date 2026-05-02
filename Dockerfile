@@ -46,5 +46,5 @@ RUN mkdir -p storage/framework/cache/data \
 # Expose port
 EXPOSE 8080
 
-# Start server with migrations
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+# Start server (migrations will be run manually or via Render dashboard)
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
