@@ -44,4 +44,4 @@ RUN mkdir -p storage/framework/cache/data \
 EXPOSE 8080
 
 # Start server - Laravel will read from environment variables
-CMD php artisan config:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+CMD php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
