@@ -19,12 +19,13 @@ return [
 
     'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
-    'allowed_origins' => [
-        'https://ecommerce-dashboard-bg8yfeaz6-jayloreyes56-uis-projects.vercel.app',
-    ],
+    'allowed_origins' => env('CORS_ALLOWED_ORIGINS') 
+        ? explode(',', env('CORS_ALLOWED_ORIGINS'))
+        : ['https://ecommerce-dashboard-bg8yfeaz6-jayloreyes56-uis-projects.vercel.app'],
 
     'allowed_origins_patterns' => [
         '/^https:\/\/ecommerce-dashboard-.*\.vercel\.app$/',
+        '/^https:\/\/.*-jayloreyes56-uis-projects\.vercel\.app$/',
     ],
 
     'allowed_headers' => ['*'],
