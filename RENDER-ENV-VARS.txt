@@ -1,0 +1,32 @@
+RENDER ENVIRONMENT VARIABLES
+Copy each line below (Key = Value)
+
+APP_ENV=production
+
+APP_DEBUG=false
+
+APP_KEY=base64:VmFKfAezKkFgXJD//PlNVD0Fu6E/+BUby4SSVcr/jnA=
+
+DB_CONNECTION=pgsql
+
+DB_HOST=aws-1-ap-northeast-2.pooler.supabase.com
+
+DB_PORT=5432
+
+DB_DATABASE=postgres
+
+DB_USERNAME=postgres.uhowxmblqheqnasiyjya
+
+DB_PASSWORD=9rVDph+-/zqw,*x
+
+DB_SSLMODE=require
+
+CACHE_DRIVER=file
+
+QUEUE_CONNECTION=sync
+
+SESSION_DRIVER=file
+
+CORS_ALLOWED_ORIGINS=https://ecommerce-dashboard-bg8yfeaz6-jayloreyes56-uis-projects.vercel.app
+
+SANCTUM_STATEFUL_DOMAINS=ecommerce-dashboard-bg8yfeaz6-jayloreyes56-uis-projects.vercel.app
