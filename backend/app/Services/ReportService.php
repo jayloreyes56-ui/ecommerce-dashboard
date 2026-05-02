@@ -49,20 +49,20 @@ class ReportService
         $cacheKey = "report:sales_chart:{$from}:{$to}:{$groupBy}";
 
         return Cache::remember($cacheKey, 600, function () use ($from, $to, $groupBy) {
-            // SQLite-compatible date formatting
+            // PostgreSQL-compatible date formatting
             $format = match ($groupBy) {
-                'week'  => '%Y-W%W',  // Year-Week
-                'month' => '%Y-%m',    // Year-Month
-                default => '%Y-%m-%d', // Year-Month-Day
+                'week'  => 'IYYY-IW',   // ISO Year-Week
+                'month' => 'YYYY-MM',   // Year-Month
+                default => 'YYYY-MM-DD', // Year-Month-Day
             };
 
             return DB::table('orders')
-                ->selectRaw("strftime(?, placed_at) as period, COUNT(*) as order_count, SUM(total) as revenue", [$format])
+                ->selectRaw("TO_CHAR(placed_at, ?) as period, COUNT(*) as order_count, SUM(total) as revenue", [$format])
                 ->where('placed_at', '>=', $from)
                 ->where('placed_at', '<=', $to . ' 23:59:59')
                 ->whereNotIn('status', ['cancelled', 'refunded'])
                 ->whereNull('deleted_at')
-                ->groupByRaw("strftime(?, placed_at)", [$format])
+                ->groupByRaw("TO_CHAR(placed_at, ?)", [$format])
                 ->orderBy('period')
                 ->get()
                 ->toArray();
