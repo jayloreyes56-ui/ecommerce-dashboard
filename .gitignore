@@ -41,3 +41,10 @@ temp/
 
 # Railway
 .railway/
+
+# Laravel storage (runtime files)
+backend/storage/framework/sessions/
+backend/storage/framework/cache/
+backend/storage/framework/views/
+backend/storage/logs/
+backend/bootstrap/cache/
