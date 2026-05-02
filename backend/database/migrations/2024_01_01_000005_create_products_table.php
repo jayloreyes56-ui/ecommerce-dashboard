@@ -46,7 +46,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('order_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('order_id')->nullable(); // Will add foreign key after orders table exists
             $table->integer('change');  // positive = restock, negative = sale/adjustment
             $table->integer('quantity_after');
             $table->string('reason', 50); // sale, return, restock, adjustment, damage
@@ -54,6 +54,7 @@ return new class extends Migration
             $table->timestamp('created_at')->useCurrent();
 
             $table->index('product_id');
+            $table->index('order_id');
             $table->index('created_at');
         });
     }
