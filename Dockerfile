@@ -40,9 +40,12 @@ RUN mkdir -p storage/framework/cache/data \
     bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
+# Create .env file and generate APP_KEY
+RUN cp .env.example .env \
+    && php artisan key:generate --force
+
 # Expose port
 EXPOSE 8080
 
-# Start server - config will be read from environment variables
-# Don't cache config in Docker build, let it read from Render env vars at runtime
+# Start server - clear config to use Render env vars, but keep generated APP_KEY as fallback
 CMD php artisan config:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
