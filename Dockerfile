@@ -40,11 +40,11 @@ RUN mkdir -p storage/framework/cache/data \
     bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Note: .env will be configured via Render environment variables
-# No need to create .env file here
+# Create a basic .env file (will be overridden by Render environment variables)
+RUN cp .env.example .env || echo "APP_KEY=" > .env
 
 # Expose port
 EXPOSE 8080
 
-# Start server (migrations will be run manually or via Render dashboard)
+# Start server (environment variables from Render will be used)
 CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
