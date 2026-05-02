@@ -81,7 +81,7 @@ A full-stack eCommerce operations dashboard for managing products, orders, custo
 ### Backend
 - **Framework:** Laravel 11
 - **Language:** PHP 8.2+
-- **Database:** PostgreSQL 15+ / SQLite (development)
+- **Database:** PostgreSQL 15+ (Supabase recommended for production)
 - **Cache/Queue:** Redis 7+
 - **Authentication:** Laravel Sanctum
 - **Authorization:** Spatie Laravel Permission
@@ -113,7 +113,7 @@ A full-stack eCommerce operations dashboard for managing products, orders, custo
 - PHP 8.2+
 - Composer
 - Node.js 18+
-- PostgreSQL 15+ or SQLite
+- PostgreSQL 15+ (Supabase recommended - see [SUPABASE-SETUP.md](./SUPABASE-SETUP.md))
 - Redis (optional but recommended)
 
 ### Installation
@@ -132,8 +132,11 @@ A full-stack eCommerce operations dashboard for managing products, orders, custo
    php artisan key:generate
    
    # Configure database in .env
-   # For SQLite (quick start):
-   touch database/database.sqlite
+   # See SUPABASE-SETUP.md for detailed instructions
+   # Update with your Supabase credentials:
+   # DB_CONNECTION=pgsql
+   # DB_HOST=db.xxxxx.supabase.co
+   # DB_PASSWORD=your-password
    
    php artisan migrate --seed
    php artisan serve
