@@ -17,7 +17,7 @@ return [
         'ecommerce-dashboard-sigma-one.vercel.app',
     ],
 
-    'guard' => ['api'],
+    'guard' => ['web'],
 
     /*
     |--------------------------------------------------------------------------
